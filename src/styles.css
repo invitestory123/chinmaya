@@ -14,32 +14,32 @@
   height:44px;
   padding:0 18px 0 14px;
   border-radius:999px;
-  border:1px solid rgba(228,181,84,.75);
-  background:rgba(45,26,13,.82);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
+  border:1.5px solid rgba(228,181,84,.85);
+  background:rgba(42,22,10,.86);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
   color:#fff2d6;
   font-size:11px;
   letter-spacing:.08em;
   text-transform:uppercase;
   cursor:pointer;
-  box-shadow:0 8px 24px rgba(25,12,5,.35);
+  box-shadow:0 8px 24px rgba(25,12,5,.4);
   transition:all .3s ease;
 }
 .floating-music-btn:hover{
-  background:rgba(60,34,17,.95);
+  background:rgba(58,30,14,.95);
   border-color:#efbd65;
   transform:translateY(-1px);
 }
 .floating-music-btn.is-playing{
   border-color:#efbd65;
-  background:rgba(45,26,13,.9);
+  background:rgba(42,22,10,.92);
 }
 .music-pulse-ring{
   position:absolute;
   inset:-3px;
   border-radius:999px;
-  border:1.5px solid rgba(239,189,101,.4);
+  border:1.5px solid rgba(239,189,101,.45);
   pointer-events:none;
   opacity:0;
 }
@@ -78,29 +78,30 @@
   text-overflow:ellipsis;
   font-size:10px;
   color:#fbead0;
+  font-weight:600;
 }
 
 /* Welcome Overlay */
 .welcome{position:fixed;inset:0;z-index:50;overflow:hidden;display:grid;place-items:end center;background:#3e2a18}
 .welcome-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;background:#3e2a18}
-.welcome-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(45,26,13,.02) 0%,rgba(47,25,12,0) 38%,rgba(47,25,12,.56) 72%,rgba(35,19,10,.9) 100%);transition:opacity .6s}
+.welcome-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(45,26,13,.02) 0%,rgba(47,25,12,0) 35%,rgba(47,25,12,.62) 70%,rgba(30,15,6,.92) 100%);transition:opacity .6s}
 .intro-playing .welcome-shade{opacity:0}
 .garland-edge{position:absolute;inset:0;border:1px solid rgba(255,226,170,.38);margin:12px;pointer-events:none;transition:opacity .5s}
 .intro-playing .garland-edge{opacity:0}
 .garland-edge:before,.garland-edge:after{content:'❀  ❀  ❀  ❀  ❀  ❀  ❀';position:absolute;top:8px;color:#fff0c9;font-size:18px;letter-spacing:5px;filter:drop-shadow(0 2px 2px #654);white-space:nowrap}
 .garland-edge:before{left:-12px;transform:rotate(90deg);transform-origin:left top}
 .garland-edge:after{right:-12px;transform:rotate(-90deg);transform-origin:right top}
-.welcome-card{position:relative;z-index:2;width:100%;padding:28px 24px max(30px,env(safe-area-inset-bottom));text-align:center;color:var(--ivory);text-shadow:0 2px 8px #2b170d;animation:welcomeCopyIn .9s .25s both}
-.om-shiva{font-size:13px;letter-spacing:.22em;color:#efbd65;margin-bottom:6px;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,.6)}
-.welcome-names small{text-transform:uppercase;letter-spacing:.18em;font-size:9px;color:#f5d99e}
-.welcome-names h1{font:46px/.95 Italiana,Georgia,serif;margin:10px 0 7px}
-.welcome-names h1 i{font:36px Parisienne,cursive;color:#efbd65;font-weight:400}
-.welcome-names p{font:20px Parisienne,cursive;margin:0 0 8px}
-.welcome-names span{font-size:11px;letter-spacing:.18em}
-.open-invite{position:relative;width:min(100%,360px);min-height:62px;margin:22px auto 0;padding:8px 16px 8px 67px;border:1px solid rgba(255,225,169,.8);border-radius:999px;background:rgba(255,242,214,.94);color:var(--ink);text-shadow:none;display:grid;text-align:left;align-content:center;box-shadow:0 12px 30px rgba(21,11,5,.28);cursor:pointer}
+.welcome-card{position:relative;z-index:2;width:100%;padding:32px 24px max(32px,env(safe-area-inset-bottom));text-align:center;color:var(--ivory);text-shadow:0 2px 8px #2b170d;animation:welcomeCopyIn .9s .25s both}
+.om-shiva{font-size:14px;letter-spacing:.12em;color:#ffd88a;margin-bottom:8px;font-weight:700;text-shadow:0 2px 6px rgba(0,0,0,.8);font-family:'Marcellus','Nirmala UI',serif}
+.welcome-names small{text-transform:uppercase;letter-spacing:.18em;font-size:9.5px;color:#f5d99e}
+.welcome-names h1{font:48px/.95 Italiana,Georgia,serif;margin:10px 0 7px;color:#ffffff;text-shadow:0 2px 10px rgba(0,0,0,.85)}
+.welcome-names h1 i{font:38px Parisienne,cursive;color:#efbd65;font-weight:400}
+.welcome-names p{font:21px Parisienne,cursive;margin:0 0 8px;color:#fcead0}
+.welcome-names span{font-size:11.5px;letter-spacing:.18em;color:#ffd88a;font-weight:600}
+.open-invite{position:relative;width:min(100%,360px);min-height:62px;margin:22px auto 0;padding:8px 16px 8px 67px;border:1.5px solid rgba(255,225,169,.9);border-radius:999px;background:rgba(255,242,214,.96);color:var(--ink);text-shadow:none;display:grid;text-align:left;align-content:center;box-shadow:0 14px 34px rgba(21,11,5,.35);cursor:pointer}
 .open-invite .seal{position:absolute;left:7px;top:7px;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:var(--ivory);background:linear-gradient(145deg,#d47b8e,#9d405d);box-shadow:inset 0 0 0 1px rgba(255,255,255,.35),0 2px 7px rgba(75,31,39,.35)}
-.open-invite b{font-size:14px;letter-spacing:.04em}
-.open-invite small{text-transform:uppercase;letter-spacing:.16em;font-size:8px;color:#8c653f;margin-top:2px}
+.open-invite b{font-size:14.5px;letter-spacing:.04em;color:#45200e}
+.open-invite small{text-transform:uppercase;letter-spacing:.16em;font-size:8.5px;color:#8c653f;margin-top:2px}
 .skip-intro{position:absolute;z-index:3;right:16px;bottom:max(16px,env(safe-area-inset-bottom));min-width:88px;min-height:44px;border:1px solid rgba(255,242,214,.46);border-radius:999px;background:rgba(54,32,17,.38);backdrop-filter:blur(8px);color:var(--ivory);font-size:10px;text-transform:uppercase;letter-spacing:.12em}
 @keyframes welcomeCopyIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 
@@ -118,18 +119,112 @@
 .lantern-tail:after{content:'◆';position:absolute;left:-3px;top:12px;color:#a56b18;font-size:9px}
 @keyframes lanternSway{to{transform:translateX(-50%) scale(var(--scale)) rotate(3deg)}}
 
-/* Hero Section */
-.hero{position:relative;min-height:100dvh;overflow:hidden;display:flex;align-items:flex-start;justify-content:center;background:var(--paper)}
-.hero-art{position:absolute;inset:0;width:100%;height:110%;object-fit:cover;object-position:center 20%}
-.hero-scrim{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,240,209,.15) 0%,rgba(91,49,22,.08) 35%,rgba(46,25,12,.5) 75%,rgba(35,18,8,.85) 100%)}
-.hero-copy{position:relative;z-index:2;width:min(92%,640px);margin-top:22dvh;text-align:center;text-shadow:0 1px 8px rgba(255,241,205,.95)}
-.om-header{font-size:12px;letter-spacing:.22em;color:#f0c675;margin-bottom:8px;font-weight:600;text-shadow:0 1px 5px rgba(0,0,0,.7)}
-.blessing,.kicker{text-transform:uppercase;letter-spacing:.18em;font-size:9.5px;color:#5a331a;line-height:1.6}
-.hero h1{font:clamp(46px,14vw,86px)/.92 Italiana,serif;margin:12px 0;color:#542b10}
-.hero h1 span{display:block;font:36px Parisienne,cursive;color:var(--gold);margin:4px}
-.date-rule{display:flex;align-items:center;gap:12px;justify-content:center;font-size:13.5px;letter-spacing:.14em;color:#45220c;font-weight:600}
-.date-rule i{height:1px;width:38px;background:var(--gold)}
-.venue-tag{font-size:12px;letter-spacing:.1em;color:#5a331a;margin-top:8px}
+/* Hero Section (4K Ultra-HD with Highlighted Royal Plaque) */
+.hero{position:relative;min-height:100dvh;overflow:hidden;display:flex;align-items:flex-start;justify-content:center;background:#2d170b}
+.hero-art{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:115%;
+  object-fit:cover;
+  object-position:center 15%;
+  image-rendering:-webkit-optimize-contrast;
+  image-rendering:crisp-edges;
+}
+.hero-scrim{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to bottom,rgba(20,9,3,.35) 0%,rgba(35,16,6,.2) 40%,rgba(26,12,5,.65) 80%,rgba(20,9,3,.9) 100%);
+}
+
+/* Highlighted Royal Plaque - Ensures wordings NEVER blend with image */
+.hero-plaque{
+  position:relative;
+  z-index:5;
+  width:min(92%,580px);
+  margin-top:16dvh;
+  margin-inline:auto;
+  padding:36px 26px 32px;
+  text-align:center;
+  background:rgba(26,12,5,.82);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:2px solid rgba(240,196,108,.85);
+  border-radius:26px;
+  box-shadow:0 22px 55px rgba(10,4,1,.75),inset 0 0 35px rgba(215,169,79,.22);
+}
+.om-header{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  font-size:15.5px;
+  letter-spacing:.08em;
+  color:#ffd88a;
+  font-weight:700;
+  margin-bottom:10px;
+  text-shadow:0 2px 8px rgba(0,0,0,.9);
+  font-family:'Marcellus','Nirmala UI',serif;
+}
+.gold-filigree-divider{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  color:#efbd65;
+  margin:4px 0 14px;
+  font-size:16px;
+}
+.gold-filigree-divider i{
+  height:1px;
+  width:50px;
+  background:linear-gradient(90deg,transparent,#efbd65,transparent);
+}
+.hero-plaque .blessing{
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  font-size:10.5px;
+  color:#f7e6c9;
+  line-height:1.6;
+  font-weight:500;
+  text-shadow:0 2px 6px rgba(0,0,0,.8);
+}
+.hero-plaque h1{
+  font:clamp(44px,12vw,74px)/.92 Italiana,serif;
+  margin:12px 0;
+  color:#ffffff;
+  text-shadow:0 3px 14px rgba(0,0,0,.95),0 0 25px rgba(239,189,101,.35);
+}
+.hero-plaque h1 span{
+  display:block;
+  font:38px Parisienne,cursive;
+  color:#f3c267;
+  margin:4px;
+  text-shadow:0 2px 8px rgba(0,0,0,.9);
+}
+.hero-plaque .date-rule{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  justify-content:center;
+  font-size:14px;
+  letter-spacing:.14em;
+  color:#ffe094;
+  font-weight:700;
+  text-shadow:0 2px 6px rgba(0,0,0,.9);
+}
+.hero-plaque .date-rule i{
+  height:1px;
+  width:38px;
+  background:#efbd65;
+}
+.hero-plaque .venue-tag{
+  font-size:13px;
+  letter-spacing:.1em;
+  color:#fff2d6;
+  margin-top:10px;
+  font-weight:500;
+  text-shadow:0 2px 6px rgba(0,0,0,.9);
+}
 .scroll-cue{position:absolute;z-index:2;bottom:18px;display:grid;place-items:center;color:var(--ivory);text-shadow:0 1px 5px #321}
 .scroll-cue span{font-size:10px;text-transform:uppercase;letter-spacing:.18em}
 .leaf-float{position:absolute;width:150px;height:210px;background:rgba(77,85,30,.2);filter:blur(18px);border-radius:100% 0;pointer-events:none}
@@ -171,7 +266,7 @@ section{position:relative;padding:88px 22px}
 .story-inner>p:not(.script){font-size:16px;line-height:1.8}
 .signature{margin-top:28px;font:28px Parisienne,cursive;color:var(--gold)}
 
-/* Ceremonies Showcase */
+/* Ceremonies Showcase (4K Ultra-HD with Appreciable Legs & Full Composition) */
 .ceremonies-showcase{background:var(--ivory);padding:80px 20px}
 .section-head{text-align:center}
 .section-intro{line-height:1.6;color:#78543d;font-style:italic;margin-top:-14px}
@@ -198,25 +293,31 @@ section{position:relative;padding:88px 22px}
 .card-image-wrap{
   position:relative;
   width:100%;
-  height:380px;
+  height:520px; /* Taller height so full bodies and walking legs are visible */
   overflow:hidden;
-  background:#432918;
+  background:#2e180d;
 }
 .ceremony-card-img{
   width:100%;
   height:100%;
   object-fit:cover;
-  object-position:center 20%;
+  image-rendering:-webkit-optimize-contrast;
   transition:transform .8s ease;
 }
+.reception-card-img{
+  object-position:center 66%; /* Positions lower down to appreciate the legs, feet, and Nandi bull */
+}
+.muhurtham-card-img{
+  object-position:center 45%; /* Centers the sacred Kalyanam wedding fire and deities */
+}
 .ceremony-card:hover .ceremony-card-img{
-  transform:scale(1.04);
+  transform:scale(1.03);
 }
 .card-badge{
   position:absolute;
   top:16px;
   right:16px;
-  background:rgba(48,26,13,.82);
+  background:rgba(48,26,13,.84);
   color:#fff2d6;
   padding:6px 14px;
   border-radius:999px;
@@ -235,6 +336,7 @@ section{position:relative;padding:88px 22px}
 .card-body{
   padding:26px 24px 28px;
   text-align:left;
+  background:#fff9ed;
 }
 .card-tag{
   font-size:11px;
@@ -299,23 +401,36 @@ section{position:relative;padding:88px 22px}
 .secondary{background:transparent;border:1px solid var(--gold);color:var(--ink)}
 
 /* Footer */
-footer{position:relative;height:580px;overflow:hidden;display:grid;place-items:end center;text-align:center;color:var(--ivory)}
-footer>img{position:absolute;width:100%;height:100%;object-fit:cover;object-position:center 30%}
-.footer-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(58,33,16,.08) 0%,rgba(48,27,12,.25) 35%,rgba(38,20,9,.88) 100%)}
+footer{position:relative;height:600px;overflow:hidden;display:grid;place-items:end center;text-align:center;color:var(--ivory)}
+footer>img{
+  position:absolute;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center 30%;
+  image-rendering:-webkit-optimize-contrast;
+}
+.footer-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(58,33,16,.08) 0%,rgba(48,27,12,.3) 40%,rgba(28,14,5,.9) 100%)}
 .footer-copy{position:relative;padding:40px 24px 10px;width:100%;text-shadow:0 2px 7px #210}
 .footer-copy p{font:25px Parisienne,cursive;color:#fcecd2}
-.footer-copy h2{font-size:46px;margin:8px 0;font-family:Italiana,serif}
+.footer-copy h2{font-size:46px;margin:8px 0;font-family:Italiana,serif;color:#ffffff;text-shadow:0 3px 12px rgba(0,0,0,.9)}
 .footer-copy h2 i{color:#efc379;font-weight:400}
-.footer-copy span{font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:#e8d1b1}
+.footer-copy span{font-size:11.5px;text-transform:uppercase;letter-spacing:.15em;color:#ffd88a;font-weight:600}
 .brand-credit{position:relative;z-index:2;display:block;margin:12px 0 22px;font-size:8.5px;text-transform:uppercase;letter-spacing:.18em;color:rgba(255,242,214,.45);text-decoration:none}
 
 /* Responsive Media Queries */
+@media(max-width:767px){
+  .hero-plaque{margin-top:14dvh;padding:28px 18px 26px}
+  .card-image-wrap{height:490px}
+  .reception-card-img{object-position:center 68%}
+}
 @media(min-width:768px){
-  .hero-art{object-position:center 32%}
-  .hero-copy{margin-top:18dvh}
+  .hero-art{object-position:center 22%}
+  .hero-plaque{margin-top:15dvh;padding:42px 34px 38px}
   .hero h1 span{display:inline}
   .ceremonies-grid{grid-template-columns:1fr 1fr}
-  .card-image-wrap{height:420px}
+  .card-image-wrap{height:540px}
+  .reception-card-img{object-position:center 65%}
   .actions{grid-template-columns:1fr 1fr}
   footer{height:720px}
   footer>img{object-position:center 35%}

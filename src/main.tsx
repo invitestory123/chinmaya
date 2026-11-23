@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import {motion, useReducedMotion, useScroll, useTransform} from 'motion/react';
-import {CalendarBlank, MapPin, MusicNotes, FlowerLotus, Sparkle, ArrowDown, SpeakerHigh, SpeakerSlash} from '@phosphor-icons/react';
+import {CalendarBlank, MapPin, MusicNotes, FlowerLotus, Sparkle, ArrowDown} from '@phosphor-icons/react';
 import gsap from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import './styles.css';
@@ -15,7 +15,7 @@ const events = [
     date: 'Saturday, 19 December 2026',
     time: '7:00 PM onwards',
     venue: 'Lakshya Convention Hall, Kadur',
-    note: 'Dinner, joyous celebration, and welcoming our newlyweds on their first evening together.',
+    note: 'An evening of joy, celebration, and dinner to welcome the beautiful couple-to-be.',
     icon: '✧',
     image: '/assets/reception.png',
     tag: 'Evening Celebration'
@@ -68,14 +68,16 @@ function Countdown(){
   );
 }
 
-function Bloom({onDone, onStartAudio}:{onDone:()=>void, onStartAudio:()=>void}){
+function Bloom({onDone, onOpenClick}:{onDone:()=>void, onOpenClick:()=>void}){
   const reduce=useReducedMotion();
   const [open,setOpen]=useState(false);
 
   const handleOpen = () => {
     setOpen(true);
-    onStartAudio();
-    onDone();
+    onOpenClick();
+    setTimeout(() => {
+      onDone();
+    }, 600);
   };
 
   return (
@@ -85,7 +87,7 @@ function Bloom({onDone, onStartAudio}:{onDone:()=>void, onStartAudio:()=>void}){
       transition={{duration:.75,ease:[.16,1,.3,1]}}
     >
       <div className="welcome-names">
-        <div className="om-shiva">|| ॐ नमः शिवाय ||</div>
+        <div className="om-shiva">|| ಓಂ ಶ್ರೀ ಗಣೇಶಾಯ ನಮಃ ||</div>
         <small>Together with our families</small>
         <h1>Chinmayi <i>&</i> Jayanth</h1>
         <p>invite you to celebrate their wedding</p>
@@ -189,68 +191,66 @@ function App(){
   const [entered,setEntered]=useState(false);
   const [introPlaying,setIntroPlaying]=useState(false);
   const [audioPlaying,setAudioPlaying]=useState(false);
-  const [userInteracted,setUserInteracted]=useState(false);
 
   const introVideo=useRef<HTMLVideoElement>(null);
   const audioRef=useRef<HTMLAudioElement>(null);
+  const bgmTimeoutRef=useRef<number | null>(null);
+
   const reduce=useReducedMotion();
   const {scrollYProgress}=useScroll();
   const leafY=useTransform(scrollYProgress,[0,1],[0,180]);
   const templeY=useTransform(scrollYProgress,[0,1],[0,95]);
   const page=useRef<HTMLElement>(null);
 
-  // Play audio from 15s on front page / intro
-  const playFromIntro = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    setUserInteracted(true);
-    audio.currentTime = 15.0; // Start at 15s as requested for intro
-    audio.play().then(() => setAudioPlaying(true)).catch(() => {});
+  // 1. When user clicks "Open our invitation": after 2 seconds, BGM starts from 15.0s
+  const handleOpenInviteClicked = () => {
+    if (bgmTimeoutRef.current) {
+      window.clearTimeout(bgmTimeoutRef.current);
+    }
+    bgmTimeoutRef.current = window.setTimeout(() => {
+      const audio = audioRef.current;
+      if (audio && !entered) {
+        audio.currentTime = 15.0; // Starts from 15s after 2s delay
+        audio.play().then(() => setAudioPlaying(true)).catch(() => {});
+      }
+    }, 2000);
   };
 
-  // Play audio with lyrics starting at ~30.5s when invitation opens
-  const playLyricsOnOpen = () => {
+  // 2. When the first page opens: BGM starts from 26.5s and resumes till end
+  const handleEnterFirstPage = () => {
+    if (bgmTimeoutRef.current) {
+      window.clearTimeout(bgmTimeoutRef.current);
+      bgmTimeoutRef.current = null;
+    }
+    setEntered(true);
     const audio = audioRef.current;
-    if (!audio) return;
-    setUserInteracted(true);
-    // Lyrics start: "Chandrachooda Shiva Shankara Parvati Ramanane..."
-    audio.currentTime = 30.5;
-    audio.play().then(() => setAudioPlaying(true)).catch(() => {});
+    if (audio) {
+      audio.currentTime = 26.5; // Starts from 26.5s as requested
+      audio.play().then(() => setAudioPlaying(true)).catch(() => {});
+    }
   };
 
   const toggleAudio = () => {
     const audio = audioRef.current;
     if (!audio) return;
-    setUserInteracted(true);
     if (audioPlaying) {
       audio.pause();
       setAudioPlaying(false);
     } else {
       if (audio.currentTime < 15.0) {
-        audio.currentTime = entered ? 30.5 : 15.0;
+        audio.currentTime = entered ? 26.5 : 15.0;
       }
       audio.play().then(() => setAudioPlaying(true)).catch(() => {});
     }
   };
 
-  // Try initial ambient audio on page touch/click if not playing yet
-  useEffect(() => {
-    const handleFirstTouch = () => {
-      if (!userInteracted && !audioPlaying && !entered) {
-        playFromIntro();
-      }
-    };
-    window.addEventListener('pointerdown', handleFirstTouch, {once: true});
-    return () => window.removeEventListener('pointerdown', handleFirstTouch);
-  }, [userInteracted, audioPlaying, entered]);
-
   useEffect(()=>{
     if(reduce||!entered||!page.current)return;
     gsap.registerPlugin(ScrollTrigger);
     const ctx=gsap.context(()=>{
-      gsap.fromTo('.hero-copy>*',{opacity:0,y:30},{opacity:1,y:0,duration:1,stagger:.12,ease:'power3.out'});
-      gsap.to('.hero-art',{scale:1.06,yPercent:5,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:1}});
-      gsap.utils.toArray<HTMLElement>('.event-card').forEach((el,i)=>gsap.fromTo(el,{opacity:0,y:40},{opacity:1,y:0,duration:.9,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 85%'}}));
+      gsap.fromTo('.hero-plaque>*',{opacity:0,y:25},{opacity:1,y:0,duration:1,stagger:.1,ease:'power3.out'});
+      gsap.to('.hero-art',{scale:1.05,yPercent:4,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:1}});
+      gsap.utils.toArray<HTMLElement>('.ceremony-card').forEach((el,i)=>gsap.fromTo(el,{opacity:0,y:35},{opacity:1,y:0,duration:.9,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 85%'}}));
       gsap.to('.map i',{y:-10,repeat:-1,yoyo:true,duration:1.2,ease:'sine.inOut'});
       gsap.utils.toArray<HTMLElement>('.atmos-lantern').forEach((el,i)=>{
         const depth=Number(el.dataset.depth||.4);
@@ -289,7 +289,7 @@ function App(){
           <MusicNotes size={20} weight="fill" />
         )}
         <span className="music-tag">
-          {audioPlaying ? 'Playing: Chandrachooda' : 'Play Music'}
+          {audioPlaying ? 'Chandrachooda' : 'Play Music'}
         </span>
       </button>
 
@@ -316,10 +316,7 @@ function App(){
             playsInline
             preload="auto"
             poster="/assets/entrance-first-frame.png"
-            onEnded={()=>{
-              setEntered(true);
-              playLyricsOnOpen();
-            }}
+            onEnded={handleEnterFirstPage}
             aria-label="Chinmayi and Jayanth's illustrated wedding invitation opening"
           >
             <source src="/assets/aarav-ananya-opening.mp4" type="video/mp4"/>
@@ -329,31 +326,27 @@ function App(){
 
           {!introPlaying && (
             <Bloom
+              onOpenClick={handleOpenInviteClicked}
               onDone={()=>{
                 const v=introVideo.current;
-                playLyricsOnOpen();
                 if(!v){
-                  setEntered(true);
+                  handleEnterFirstPage();
                   return;
                 }
                 v.currentTime=0;
                 setIntroPlaying(true);
                 void v.play().catch(()=>{
                   setIntroPlaying(false);
-                  setEntered(true);
+                  handleEnterFirstPage();
                 });
               }}
-              onStartAudio={playLyricsOnOpen}
             />
           )}
 
           {introPlaying && (
             <button
               className="skip-intro"
-              onClick={()=>{
-                setEntered(true);
-                playLyricsOnOpen();
-              }}
+              onClick={handleEnterFirstPage}
             >
               Skip intro
             </button>
@@ -361,27 +354,34 @@ function App(){
         </div>
       )}
 
-      {/* Hero Section: Shiv-Parvati Hands with Trishul (Replacing boy lifting girl) */}
+      {/* Hero Section: Shiv-Parvati Hands with Trishul (4K Ultra-HD with Royal Plaque) */}
       <section className="hero">
         <motion.img
           className="hero-art"
           src="/assets/shiv-parvati-hands.png"
-          alt="Lord Shiva and Goddess Parvati hands holding Trishul with temple gopuram and lotus flowers"
+          alt="Lord Shiva and Goddess Parvati hands holding Trishul with temple gopuram and lotus flowers in 4K HD"
           style={{y:reduce?0:templeY}}
         />
         <div className="hero-scrim"/>
+        
+        {/* Highlighted Royal Plaque so wordings never blend with image */}
         <motion.div
-          className="hero-copy"
+          className="hero-copy hero-plaque"
           initial={{opacity:0,y:24}}
           animate={{opacity:entered?1:0,y:entered?0:24}}
           transition={{delay:.15,duration:1}}
         >
-          <div className="om-header">|| ಶ್ರೀ ಗುರುಭ್ಯೋ ನಮಃ || ॐ नमः शिवाय ||</div>
-          <p className="blessing">With the divine blessings of Lord Shiva & Goddess Parvati<br/>and our beloved families</p>
-          <h1>Chinmayi <span>&</span> Jayanth</h1>
+          <div className="om-header">
+            <span>ಓಂ ಶ್ರೀ ಗುರುಭ್ಯೋ ನಮಃ ।।</span>
+            <span>ಓಂ ನಮಃ ಶಿವಾಯ ।।</span>
+          </div>
+          <div className="gold-filigree-divider"><i/>❦<i/></div>
+          <p className="blessing">With the divine blessings of Lord Shiva &amp; Goddess Parvati<br/>and our beloved families</p>
+          <h1>Chinmayi <span>&amp;</span> Jayanth</h1>
           <div className="date-rule"><i/>19 · 20 · DECEMBER · 2026<i/></div>
           <p className="venue-tag">Lakshya Convention Hall · Kadur, Karnataka</p>
         </motion.div>
+
         <motion.div className="leaf-float left" style={{y:reduce?0:leafY}}/>
         <motion.div className="leaf-float right" style={{y:reduce?0:leafY}}/>
         <div className="scroll-cue"><ArrowDown size={20}/><span>Our Celebrations</span></div>
@@ -409,7 +409,7 @@ function App(){
             Like the eternal harmony of Shiva and Shakti, two lives come together in love, duty, and eternal devotion.
             With joyful hearts and the blessings of our elders, we invite you to grace our wedding celebration with your prayers and presence.
           </p>
-          <div className="signature">Chinmayi V Pandith <i>&</i> Jayanth T M</div>
+          <div className="signature">Chinmayi V Pandith <i>&amp;</i> Jayanth T M</div>
         </Reveal>
       </section>
 
@@ -422,21 +422,21 @@ function App(){
         </Reveal>
 
         <div className="ceremonies-grid">
-          {/* 1. Reception Card (Shiv Parvati walking in Kailash) */}
+          {/* 1. Reception Card (Full length walking Shiva & Parvati with Nandi - feet & legs visible) */}
           <div className="ceremony-card">
             <div className="card-image-wrap">
               <img
                 src="/assets/reception.png"
                 alt="Lord Shiva and Goddess Parvati walking together with Nandi in Mount Kailash"
                 loading="lazy"
-                className="ceremony-card-img"
+                className="ceremony-card-img reception-card-img"
               />
               <span className="card-badge">Saturday Evening</span>
             </div>
             <div className="card-body">
               <span className="card-tag">✧ Reception</span>
               <h3>Grand Reception</h3>
-              <p className="card-desc">An evening filled with joy, felicitations, and an exquisite dinner to welcome the newlyweds.</p>
+              <p className="card-desc">An evening of joy, celebration, and dinner to welcome the beautiful couple-to-be.</p>
               <div className="card-details">
                 <div className="detail-row">
                   <span className="detail-label">Date:</span>
@@ -454,14 +454,14 @@ function App(){
             </div>
           </div>
 
-          {/* 2. Muhurtham Card (Shiva Parvati Kalyanam before sacred fire) */}
+          {/* 2. Muhurtham Card (New 4K Shiva Parvati Kalyanam before sacred fire) */}
           <div className="ceremony-card featured-card">
             <div className="card-image-wrap">
               <img
                 src="/assets/muhurtham.png"
-                alt="Shiva Parvati Kalyanam - divine wedding ceremony before holy fire"
+                alt="Shiva Parvati Kalyanam - divine celestial wedding ceremony before holy fire in 4K HD"
                 loading="lazy"
-                className="ceremony-card-img"
+                className="ceremony-card-img muhurtham-card-img"
               />
               <span className="card-badge gold">Sunday Morning</span>
             </div>
@@ -529,19 +529,19 @@ function App(){
         </Reveal>
       </section>
 
-      {/* Footer / Last Image: Lord Shiva & Parvati overlooking golden temple */}
+      {/* Footer / Last Image: Lord Shiva & Parvati overlooking golden temple in 4K HD */}
       <footer>
         <img
           src="/assets/footer-temple.png"
           loading="lazy"
-          alt="Lord Shiva and Goddess Parvati seated overlooking divine golden temple city"
+          alt="Lord Shiva and Goddess Parvati seated overlooking divine golden temple city in 4K HD"
         />
         <div className="footer-overlay"/>
         <Reveal className="footer-copy">
           <Sparkle size={27} weight="thin"/>
           <p>We eagerly await your gracious presence and blessings</p>
-          <h2>Chinmayi <i>&</i> Jayanth</h2>
-          <span>19 & 20 December 2026 · Lakshya Convention Hall · Kadur</span>
+          <h2>Chinmayi <i>&amp;</i> Jayanth</h2>
+          <span>19 &amp; 20 December 2026 · Lakshya Convention Hall · Kadur</span>
         </Reveal>
         <a
           href="https://www.instagram.com/invitestory.in/"
