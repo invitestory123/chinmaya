@@ -199,7 +199,7 @@ function App(){
 
   // When user taps "Open our invitation":
   // 1. Instantly start video so there is NO blank/brown delay
-  // 2. Start audio after 5 seconds from the 15th second up to the intro video ending
+  // 2. Start audio from 15.0s (plays 15s - 25s up to the intro video ending)
   const handleOpenInviteClicked = () => {
     // Start video playback immediately within user click gesture
     const v = introVideo.current;
@@ -209,7 +209,7 @@ function App(){
       void v.play().catch(() => {});
     }
 
-    // Audio: start silent playback now to unlock browser audio, then play from 15.0s at 5s
+    // Audio: start silent playback now to unlock browser audio, then play from 15.0s (15s - 25s)
     const audio = audioRef.current;
     if (audio) {
       if (audioTimerRef.current) {
@@ -223,7 +223,7 @@ function App(){
         audio.currentTime = 15.0;
         audio.volume = 1.0;
         audio.play().catch(() => {});
-      }, 5000);
+      }, 1000);
 
       if (playPromise !== undefined) {
         playPromise.catch(() => {});
@@ -275,7 +275,7 @@ function App(){
       {/* Background Audio Player */}
       <audio
         ref={audioRef}
-        src="/assets/audio.mp3"
+        src="/assets/audio.mp3?v=4"
         preload="auto"
         loop
         playsInline
@@ -337,6 +337,12 @@ function App(){
 
       {/* Hero Section: Shiv-Parvati Hands with Trishul (4K Ultra-HD with Royal Plaque) */}
       <section className="hero">
+        <img
+          className="hero-art-backdrop"
+          src="/assets/shiv-parvati-hands.png"
+          alt=""
+          aria-hidden="true"
+        />
         <motion.img
           className="hero-art"
           src="/assets/shiv-parvati-hands.png"
