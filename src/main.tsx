@@ -248,7 +248,7 @@ function App(){
     if(reduce||!entered||!page.current)return;
     gsap.registerPlugin(ScrollTrigger);
     const ctx=gsap.context(()=>{
-      gsap.fromTo('.hero-plaque>*',{opacity:0,y:25},{opacity:1,y:0,duration:1,stagger:.1,ease:'power3.out'});
+      gsap.fromTo('.hero-copy>*',{opacity:0,y:25},{opacity:1,y:0,duration:1,stagger:.1,ease:'power3.out'});
       gsap.to('.hero-art',{scale:1.05,yPercent:4,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:1}});
       gsap.utils.toArray<HTMLElement>('.ceremony-card').forEach((el,i)=>gsap.fromTo(el,{opacity:0,y:35},{opacity:1,y:0,duration:.9,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 85%'}}));
       gsap.to('.map i',{y:-10,repeat:-1,yoyo:true,duration:1.2,ease:'sine.inOut'});
@@ -364,9 +364,9 @@ function App(){
         />
         <div className="hero-scrim"/>
         
-        {/* Highlighted Royal Plaque so wordings never blend with image */}
+        {/* Hero Copy (Unobscured so divine background image is fully revealed) */}
         <motion.div
-          className="hero-copy hero-plaque"
+          className="hero-copy"
           initial={{opacity:0,y:24}}
           animate={{opacity:entered?1:0,y:entered?0:24}}
           transition={{delay:.15,duration:1}}
