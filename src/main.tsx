@@ -79,12 +79,18 @@ function Bloom({onOpenClick, isOpening}:{onOpenClick:()=>void, isOpening:boolean
     <motion.div
       className={'welcome-card '+(isOpening?'is-open':'')}
       animate={isOpening&&!reduce?{scale:1.04,opacity:0}:{}}
-      transition={{duration:.75,ease:[.16,1,.3,1]}}
+      transition={{duration:.2,ease:'easeOut'}}
       style={{pointerEvents: isOpening ? 'none' : 'auto'}}
     >
-      <div className="om-shiva">|| ಓಂ ಶ್ರೀ ಗಣೇಶಾಯ ನಮಃ ||</div>
+      <div className="welcome-names">
+        <div className="om-shiva">|| ಓಂ ಶ್ರೀ ಗಣೇಶಾಯ ನಮಃ ||</div>
+        <small>Together with our families</small>
+        <h1>Chinmayi <i>&</i> Jayanth</h1>
+        <p>invite you to celebrate their wedding</p>
+        <span>19 · 20 · DECEMBER · 2026</span>
+      </div>
       <motion.button
-        aria-label="Open our invitation"
+        aria-label="Open Chinmayi and Jayanth's invitation"
         className="open-invite"
         onClick={handleOpen}
         whileTap={{scale:.97}}
@@ -310,10 +316,12 @@ function App(){
           <div className="welcome-shade"/>
           <div className="garland-edge"/>
 
-          <Bloom
-            isOpening={introPlaying}
-            onOpenClick={handleOpenInviteClicked}
-          />
+          {!introPlaying && (
+            <Bloom
+              isOpening={introPlaying}
+              onOpenClick={handleOpenInviteClicked}
+            />
+          )}
 
           {introPlaying && !isExiting && (
             <button
