@@ -68,23 +68,19 @@ function Countdown(){
   );
 }
 
-function Bloom({onDone, onOpenClick}:{onDone:()=>void, onOpenClick:()=>void}){
+function Bloom({onOpenClick, isOpening}:{onOpenClick:()=>void, isOpening:boolean}){
   const reduce=useReducedMotion();
-  const [open,setOpen]=useState(false);
 
   const handleOpen = () => {
-    setOpen(true);
     onOpenClick();
-    setTimeout(() => {
-      onDone();
-    }, 600);
   };
 
   return (
     <motion.div
-      className={'welcome-card '+(open?'is-open':'')}
-      animate={open&&!reduce?{scale:1.04,opacity:0}:{}}
+      className={'welcome-card '+(isOpening?'is-open':'')}
+      animate={isOpening&&!reduce?{scale:1.04,opacity:0}:{}}
       transition={{duration:.75,ease:[.16,1,.3,1]}}
+      style={{pointerEvents: isOpening ? 'none' : 'auto'}}
     >
       <div className="welcome-names">
         <div className="om-shiva">|| ಓಂ ಶ್ರೀ ಗಣೇಶಾಯ ನಮಃ ||</div>
@@ -189,6 +185,7 @@ function ScratchDate(){
 function App(){
   const [entered,setEntered]=useState(false);
   const [introPlaying,setIntroPlaying]=useState(false);
+  const [isExiting,setIsExiting]=useState(false);
 
   const introVideo=useRef<HTMLVideoElement>(null);
   const audioRef=useRef<HTMLAudioElement>(null);
@@ -200,47 +197,60 @@ function App(){
   const heroParallaxY=useTransform(scrollYProgress,[0,0.3],[0,45]);
   const page=useRef<HTMLElement>(null);
 
-  // When user taps "Open our invitation": after 5 seconds of tapping, the song starts from 10th second
+  // When user taps "Open our invitation":
+  // 1. Instantly start video so there is NO blank/brown delay
+  // 2. Start audio after 5 seconds from the 11th second
   const handleOpenInviteClicked = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (audioTimerRef.current) {
-      window.clearTimeout(audioTimerRef.current);
+    // Start video playback immediately within user click gesture
+    const v = introVideo.current;
+    if (v) {
+      v.currentTime = 0;
+      setIntroPlaying(true);
+      void v.play().catch(() => {});
     }
 
-    // Capture user activation immediately so browser permits delayed audible playback
-    audio.volume = 0;
-    audio.currentTime = 10.0;
-    const playPromise = audio.play();
+    // Audio: start silent playback now to unlock browser audio, then play from 11.0s at 5s
+    const audio = audioRef.current;
+    if (audio) {
+      if (audioTimerRef.current) {
+        window.clearTimeout(audioTimerRef.current);
+      }
+      audio.volume = 0;
+      audio.currentTime = 11.0;
+      const playPromise = audio.play();
 
-    // After exactly 5 seconds of tapping, song starts audibly from 10th second
-    audioTimerRef.current = window.setTimeout(() => {
-      audio.currentTime = 10.0;
-      audio.volume = 1.0;
-      audio.play().catch(() => {});
-    }, 5000);
+      audioTimerRef.current = window.setTimeout(() => {
+        audio.currentTime = 11.0;
+        audio.volume = 1.0;
+        audio.play().catch(() => {});
+      }, 5000);
 
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {});
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
     }
   };
 
-  // When intro ends or user clicks skip intro: ensure audio is playing audibly from 10th second
+  // When intro ends or user clicks skip intro: smooth cross-fade to hero, audio from 11.0s
   const handleEnterFirstPage = () => {
-    setEntered(true);
+    if (isExiting) return;
+    setIsExiting(true);
+
     const audio = audioRef.current;
-    if (audio) {
-      if (audio.paused || audio.volume === 0) {
-        if (audioTimerRef.current) {
-          window.clearTimeout(audioTimerRef.current);
-          audioTimerRef.current = null;
-        }
-        audio.currentTime = 10.0;
-        audio.volume = 1.0;
-        audio.play().catch(() => {});
+    if (audio && (audio.paused || audio.volume === 0)) {
+      if (audioTimerRef.current) {
+        window.clearTimeout(audioTimerRef.current);
+        audioTimerRef.current = null;
       }
+      audio.currentTime = 11.0;
+      audio.volume = 1.0;
+      audio.play().catch(() => {});
     }
+
+    // Smoothly dissolve welcome overlay into the hero section
+    setTimeout(() => {
+      setEntered(true);
+    }, 700);
   };
 
   useEffect(()=>{
@@ -285,7 +295,12 @@ function App(){
 
       {/* Welcome Screen with Groom lifting Bride & Opening Animation */}
       {!entered && (
-        <div className={'welcome '+(introPlaying?'intro-playing':'')}>
+        <div className={`welcome ${introPlaying ? 'intro-playing' : ''} ${isExiting ? 'is-exiting' : ''}`}>
+          <img
+            src="/assets/entrance-first-frame.png"
+            alt="Chinmayi and Jayanth wedding welcome illustration"
+            className="welcome-poster"
+          />
           <video
             ref={introVideo}
             className="welcome-video"
@@ -301,26 +316,12 @@ function App(){
           <div className="welcome-shade"/>
           <div className="garland-edge"/>
 
-          {!introPlaying && (
-            <Bloom
-              onOpenClick={handleOpenInviteClicked}
-              onDone={()=>{
-                const v=introVideo.current;
-                if(!v){
-                  handleEnterFirstPage();
-                  return;
-                }
-                v.currentTime=0;
-                setIntroPlaying(true);
-                void v.play().catch(()=>{
-                  setIntroPlaying(false);
-                  handleEnterFirstPage();
-                });
-              }}
-            />
-          )}
+          <Bloom
+            isOpening={introPlaying}
+            onOpenClick={handleOpenInviteClicked}
+          />
 
-          {introPlaying && (
+          {introPlaying && !isExiting && (
             <button
               className="skip-intro"
               onClick={handleEnterFirstPage}
