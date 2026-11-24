@@ -82,15 +82,9 @@ function Bloom({onOpenClick, isOpening}:{onOpenClick:()=>void, isOpening:boolean
       transition={{duration:.75,ease:[.16,1,.3,1]}}
       style={{pointerEvents: isOpening ? 'none' : 'auto'}}
     >
-      <div className="welcome-names">
-        <div className="om-shiva">|| ಓಂ ಶ್ರೀ ಗಣೇಶಾಯ ನಮಃ ||</div>
-        <small>Together with our families</small>
-        <h1>Chinmayi <i>&</i> Jayanth</h1>
-        <p>invite you to celebrate their wedding</p>
-        <span>19 · 20 · DECEMBER · 2026</span>
-      </div>
+      <div className="om-shiva">|| ಓಂ ಶ್ರೀ ಗಣೇಶಾಯ ನಮಃ ||</div>
       <motion.button
-        aria-label="Open Chinmayi and Jayanth's invitation"
+        aria-label="Open our invitation"
         className="open-invite"
         onClick={handleOpen}
         whileTap={{scale:.97}}
