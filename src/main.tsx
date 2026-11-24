@@ -219,11 +219,12 @@ function App(){
       audio.currentTime = 15.0;
       const playPromise = audio.play();
 
+      // After 4 seconds, start playing audibly from 15.0s up to the intro video ending
       audioTimerRef.current = window.setTimeout(() => {
         audio.currentTime = 15.0;
         audio.volume = 1.0;
         audio.play().catch(() => {});
-      }, 1000);
+      }, 4000);
 
       if (playPromise !== undefined) {
         playPromise.catch(() => {});
@@ -337,12 +338,6 @@ function App(){
 
       {/* Hero Section: Shiv-Parvati Hands with Trishul (4K Ultra-HD with Royal Plaque) */}
       <section className="hero">
-        <img
-          className="hero-art-backdrop"
-          src="/assets/shiv-parvati-hands.png"
-          alt=""
-          aria-hidden="true"
-        />
         <motion.img
           className="hero-art"
           src="/assets/shiv-parvati-hands.png"
