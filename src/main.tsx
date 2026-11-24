@@ -199,7 +199,7 @@ function App(){
 
   // When user taps "Open our invitation":
   // 1. Instantly start video so there is NO blank/brown delay
-  // 2. Start audio after 5 seconds from the 11th second
+  // 2. Start audio after 5 seconds from the 15th second up to the intro video ending
   const handleOpenInviteClicked = () => {
     // Start video playback immediately within user click gesture
     const v = introVideo.current;
@@ -209,18 +209,18 @@ function App(){
       void v.play().catch(() => {});
     }
 
-    // Audio: start silent playback now to unlock browser audio, then play from 11.0s at 5s
+    // Audio: start silent playback now to unlock browser audio, then play from 15.0s at 5s
     const audio = audioRef.current;
     if (audio) {
       if (audioTimerRef.current) {
         window.clearTimeout(audioTimerRef.current);
       }
       audio.volume = 0;
-      audio.currentTime = 11.0;
+      audio.currentTime = 15.0;
       const playPromise = audio.play();
 
       audioTimerRef.current = window.setTimeout(() => {
-        audio.currentTime = 11.0;
+        audio.currentTime = 15.0;
         audio.volume = 1.0;
         audio.play().catch(() => {});
       }, 5000);
@@ -231,18 +231,19 @@ function App(){
     }
   };
 
-  // When intro ends or user clicks skip intro: smooth cross-fade to hero, audio from 11.0s
+  // When intro ends or user clicks skip intro: start from 26.5s and continue
   const handleEnterFirstPage = () => {
     if (isExiting) return;
     setIsExiting(true);
 
+    if (audioTimerRef.current) {
+      window.clearTimeout(audioTimerRef.current);
+      audioTimerRef.current = null;
+    }
+
     const audio = audioRef.current;
-    if (audio && (audio.paused || audio.volume === 0)) {
-      if (audioTimerRef.current) {
-        window.clearTimeout(audioTimerRef.current);
-        audioTimerRef.current = null;
-      }
-      audio.currentTime = 11.0;
+    if (audio) {
+      audio.currentTime = 26.5; // Starts from 26.5s as requested
       audio.volume = 1.0;
       audio.play().catch(() => {});
     }
