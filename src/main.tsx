@@ -199,36 +199,56 @@ function App(){
 
   // When user taps "Open our invitation":
   // 1. Instantly start video so there is NO blank/brown delay
-  // 2. Start audio from 15.0s (plays 15s - 25s up to the intro video ending)
+  // 2. Start audio: on mobile, audio.play() MUST be initiated synchronously in the user touch event to unlock mobile audio permission.
+  // Using audio.muted = true ensures that on iOS Safari (where audio.volume is read-only and ignores volume = 0),
+  // the audio remains truly silent during the initial 4 seconds without prematurely playing sound.
+  // 3. Exactly 4 seconds after tapping, the song starts playing audibly from 15.0s during the intro.
+  // 4. When reaching the invitation page (intro ends or skip clicked), the song starts from 26.5s and continues.
   const handleOpenInviteClicked = () => {
-    // Start video playback immediately within user click gesture
+    // 1. Start intro video immediately within user gesture
     const v = introVideo.current;
     if (v) {
+      v.defaultMuted = true;
+      v.muted = true;
+      v.playsInline = true;
       v.currentTime = 0;
       setIntroPlaying(true);
       void v.play().catch(() => {});
     }
 
-    // Audio: start silent playback now to unlock browser audio, then play from 15.0s (15s - 25s)
+    // 2. Start audio silently to capture user gesture and establish active mobile audio session
     const audio = audioRef.current;
     if (audio) {
       if (audioTimerRef.current) {
         window.clearTimeout(audioTimerRef.current);
+        audioTimerRef.current = null;
       }
-      audio.volume = 0;
-      audio.currentTime = 15.0;
+
+      // iOS Safari ignores audio.volume = 0, but fully respects audio.muted = true!
+      audio.muted = true;
+      audio.volume = 1.0;
+      try {
+        // Silently start from 11.0s so it streams toward 15.0s during the 4 seconds
+        audio.currentTime = 11.0;
+      } catch {}
+
       const playPromise = audio.play();
-
-      // After 4 seconds, start playing audibly from 15.0s up to the intro video ending
-      audioTimerRef.current = window.setTimeout(() => {
-        audio.currentTime = 15.0;
-        audio.volume = 1.0;
-        audio.play().catch(() => {});
-      }, 4000);
-
       if (playPromise !== undefined) {
         playPromise.catch(() => {});
       }
+
+      // After exactly 4 seconds, ensure 15.0s, unmute, and play audibly
+      audioTimerRef.current = window.setTimeout(() => {
+        try {
+          audio.currentTime = 15.0;
+        } catch {}
+        audio.muted = false;
+        audio.volume = 1.0;
+        const p2 = audio.play();
+        if (p2 !== undefined) {
+          p2.catch(() => {});
+        }
+      }, 4000);
     }
   };
 
@@ -244,9 +264,15 @@ function App(){
 
     const audio = audioRef.current;
     if (audio) {
-      audio.currentTime = 26.5; // Starts from 26.5s as requested
+      audio.muted = false;
       audio.volume = 1.0;
-      audio.play().catch(() => {});
+      try {
+        audio.currentTime = 26.5; // Starts from 26.5s as requested
+      } catch {}
+      const p = audio.play();
+      if (p !== undefined) {
+        p.catch(() => {});
+      }
     }
 
     // Smoothly dissolve welcome overlay into the hero section
@@ -254,6 +280,30 @@ function App(){
       setEntered(true);
     }, 700);
   };
+
+  // Mobile touch fallback: ensures mobile browsers resume playback if page was backgrounded or restricted
+  useEffect(() => {
+    const handleMobileTouchFallback = () => {
+      const audio = audioRef.current;
+      if (!audio) return;
+      if (entered) {
+        if (audio.paused || audio.muted) {
+          audio.muted = false;
+          audio.volume = 1.0;
+          if (audio.currentTime < 26.0) {
+            try { audio.currentTime = 26.5; } catch {}
+          }
+          audio.play().catch(() => {});
+        }
+      }
+    };
+    window.addEventListener('touchend', handleMobileTouchFallback, { passive: true });
+    window.addEventListener('click', handleMobileTouchFallback, { passive: true });
+    return () => {
+      window.removeEventListener('touchend', handleMobileTouchFallback);
+      window.removeEventListener('click', handleMobileTouchFallback);
+    };
+  }, [entered]);
 
   useEffect(()=>{
     if(reduce||!entered||!page.current)return;
@@ -307,6 +357,7 @@ function App(){
             ref={introVideo}
             className="welcome-video"
             muted
+            defaultMuted
             playsInline
             preload="auto"
             poster="/assets/entrance-first-frame.png"
