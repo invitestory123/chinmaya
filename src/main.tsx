@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import {motion, useReducedMotion, useScroll, useTransform} from 'motion/react';
-import {CalendarBlank, MapPin, MusicNotes, FlowerLotus, Sparkle, ArrowDown} from '@phosphor-icons/react';
+import {CalendarBlank, MapPin, FlowerLotus, Sparkle, ArrowDown} from '@phosphor-icons/react';
 import gsap from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
 import './styles.css';
@@ -189,10 +189,10 @@ function ScratchDate(){
 function App(){
   const [entered,setEntered]=useState(false);
   const [introPlaying,setIntroPlaying]=useState(false);
-  const [audioPlaying,setAudioPlaying]=useState(false);
 
   const introVideo=useRef<HTMLVideoElement>(null);
   const audioRef=useRef<HTMLAudioElement>(null);
+  const audioTimerRef=useRef<number | null>(null);
 
   const reduce=useReducedMotion();
   const {scrollYProgress}=useScroll();
@@ -200,68 +200,46 @@ function App(){
   const heroParallaxY=useTransform(scrollYProgress,[0,0.3],[0,45]);
   const page=useRef<HTMLElement>(null);
 
-  // Helper to safely play audio at specified timestamp
-  const playAudio = (time?: number) => {
+  // When user taps "Open our invitation": after 5 seconds of tapping, the song starts from 10th second
+  const handleOpenInviteClicked = () => {
     const audio = audioRef.current;
     if (!audio) return;
-    if (typeof time === 'number') {
-      try {
-        audio.currentTime = time;
-      } catch {}
+
+    if (audioTimerRef.current) {
+      window.clearTimeout(audioTimerRef.current);
     }
-    audio.play().then(() => {
-      setAudioPlaying(true);
-    }).catch(() => {
-      // Browser blocked autoplay until first user touch
-    });
+
+    // Capture user activation immediately so browser permits delayed audible playback
+    audio.volume = 0;
+    audio.currentTime = 10.0;
+    const playPromise = audio.play();
+
+    // After exactly 5 seconds of tapping, song starts audibly from 10th second
+    audioTimerRef.current = window.setTimeout(() => {
+      audio.currentTime = 10.0;
+      audio.volume = 1.0;
+      audio.play().catch(() => {});
+    }, 5000);
+
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {});
+    }
   };
 
-  // 1. Auto-start on load & unlock on very first touch/gesture anywhere
-  useEffect(() => {
-    // Attempt automatic playback on initial load from 15.0s (front page intro)
-    playAudio(15.0);
-
-    const onFirstUserAction = () => {
-      const audio = audioRef.current;
-      if (audio && audio.paused) {
-        playAudio(entered ? 26.5 : 15.0);
-      }
-    };
-
-    window.addEventListener('pointerdown', onFirstUserAction, { passive: true });
-    window.addEventListener('touchstart', onFirstUserAction, { passive: true });
-    window.addEventListener('click', onFirstUserAction, { passive: true });
-
-    return () => {
-      window.removeEventListener('pointerdown', onFirstUserAction);
-      window.removeEventListener('touchstart', onFirstUserAction);
-      window.removeEventListener('click', onFirstUserAction);
-    };
-  }, [entered]);
-
-  // 2. When user clicks "Open our invitation": ensure audio is playing from 15.0s
-  const handleOpenInviteClicked = () => {
-    // Synchronously trigger playback within user gesture context
-    playAudio(15.0);
-  };
-
-  // 3. When invitation opens into first page: lyrics start from 26.5s and resume till end
+  // When intro ends or user clicks skip intro: ensure audio is playing audibly from 10th second
   const handleEnterFirstPage = () => {
     setEntered(true);
-    playAudio(26.5);
-  };
-
-  const toggleAudio = () => {
     const audio = audioRef.current;
-    if (!audio) return;
-    if (audioPlaying) {
-      audio.pause();
-      setAudioPlaying(false);
-    } else {
-      if (audio.currentTime < 15.0) {
-        audio.currentTime = entered ? 26.5 : 15.0;
+    if (audio) {
+      if (audio.paused || audio.volume === 0) {
+        if (audioTimerRef.current) {
+          window.clearTimeout(audioTimerRef.current);
+          audioTimerRef.current = null;
+        }
+        audio.currentTime = 10.0;
+        audio.volume = 1.0;
+        audio.play().catch(() => {});
       }
-      audio.play().then(() => setAudioPlaying(true)).catch(() => {});
     }
   };
 
@@ -289,31 +267,8 @@ function App(){
         src="/assets/audio.mp3"
         preload="auto"
         loop
-        autoPlay
         playsInline
-        onPlay={()=>setAudioPlaying(true)}
-        onPause={()=>setAudioPlaying(false)}
       />
-
-      {/* Floating Music Controller */}
-      <button
-        className={`floating-music-btn ${audioPlaying ? 'is-playing' : ''}`}
-        onClick={toggleAudio}
-        aria-label={audioPlaying ? 'Mute devotional music' : 'Play devotional music'}
-        title="Chandrachooda Shiva Shankara Parvati"
-      >
-        <span className="music-pulse-ring" />
-        {audioPlaying ? (
-          <span className="sound-bars">
-            <i/><i/><i/><i/>
-          </span>
-        ) : (
-          <MusicNotes size={20} weight="fill" />
-        )}
-        <span className="music-tag">
-          {audioPlaying ? 'Chandrachooda' : 'Play Music'}
-        </span>
-      </button>
 
       <motion.div className="scroll-progress" style={{scaleX:scrollYProgress}}/>
 
