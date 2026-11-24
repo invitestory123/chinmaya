@@ -193,7 +193,6 @@ function App(){
 
   const introVideo=useRef<HTMLVideoElement>(null);
   const audioRef=useRef<HTMLAudioElement>(null);
-  const bgmTimeoutRef=useRef<number | null>(null);
 
   const reduce=useReducedMotion();
   const {scrollYProgress}=useScroll();
@@ -201,32 +200,55 @@ function App(){
   const heroParallaxY=useTransform(scrollYProgress,[0,0.3],[0,45]);
   const page=useRef<HTMLElement>(null);
 
-  // 1. When user clicks "Open our invitation": after 4 seconds, BGM starts from 15.0s
-  const handleOpenInviteClicked = () => {
-    if (bgmTimeoutRef.current) {
-      window.clearTimeout(bgmTimeoutRef.current);
+  // Helper to safely play audio at specified timestamp
+  const playAudio = (time?: number) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (typeof time === 'number') {
+      try {
+        audio.currentTime = time;
+      } catch {}
     }
-    bgmTimeoutRef.current = window.setTimeout(() => {
-      const audio = audioRef.current;
-      if (audio && !entered) {
-        audio.currentTime = 15.0; // Starts from 15s after 4s delay as requested
-        audio.play().then(() => setAudioPlaying(true)).catch(() => {});
-      }
-    }, 4000);
+    audio.play().then(() => {
+      setAudioPlaying(true);
+    }).catch(() => {
+      // Browser blocked autoplay until first user touch
+    });
   };
 
-  // 2. When the first page opens: BGM starts from 26.5s and resumes till end
+  // 1. Auto-start on load & unlock on very first touch/gesture anywhere
+  useEffect(() => {
+    // Attempt automatic playback on initial load from 15.0s (front page intro)
+    playAudio(15.0);
+
+    const onFirstUserAction = () => {
+      const audio = audioRef.current;
+      if (audio && audio.paused) {
+        playAudio(entered ? 26.5 : 15.0);
+      }
+    };
+
+    window.addEventListener('pointerdown', onFirstUserAction, { passive: true });
+    window.addEventListener('touchstart', onFirstUserAction, { passive: true });
+    window.addEventListener('click', onFirstUserAction, { passive: true });
+
+    return () => {
+      window.removeEventListener('pointerdown', onFirstUserAction);
+      window.removeEventListener('touchstart', onFirstUserAction);
+      window.removeEventListener('click', onFirstUserAction);
+    };
+  }, [entered]);
+
+  // 2. When user clicks "Open our invitation": ensure audio is playing from 15.0s
+  const handleOpenInviteClicked = () => {
+    // Synchronously trigger playback within user gesture context
+    playAudio(15.0);
+  };
+
+  // 3. When invitation opens into first page: lyrics start from 26.5s and resume till end
   const handleEnterFirstPage = () => {
-    if (bgmTimeoutRef.current) {
-      window.clearTimeout(bgmTimeoutRef.current);
-      bgmTimeoutRef.current = null;
-    }
     setEntered(true);
-    const audio = audioRef.current;
-    if (audio) {
-      audio.currentTime = 26.5; // Starts from 26.5s as requested
-      audio.play().then(() => setAudioPlaying(true)).catch(() => {});
-    }
+    playAudio(26.5);
   };
 
   const toggleAudio = () => {
@@ -267,6 +289,8 @@ function App(){
         src="/assets/audio.mp3"
         preload="auto"
         loop
+        autoPlay
+        playsInline
         onPlay={()=>setAudioPlaying(true)}
         onPause={()=>setAudioPlaying(false)}
       />
