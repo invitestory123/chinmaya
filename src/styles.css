@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Italiana&family=Marcellus&family=Parisienne&display=swap');
 :root{--paper:#f5e2bd;--ivory:#fff2d6;--gold:#b97816;--olive:#4d551e;--rose:#c85d78;--coral:#c77c70;--teal:#54747b;--ink:#50301d;--radius:18px;font-family:Marcellus,Georgia,serif;color:var(--ink);background:var(--paper);font-synthesis:none}main{position:relative;isolation:isolate}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;overflow-x:hidden;background:var(--paper)}button,a{font:inherit}button{color:inherit}.scroll-progress{position:fixed;z-index:40;left:0;right:0;top:0;height:3px;transform-origin:left;background:linear-gradient(90deg,var(--rose),#e4b554,var(--olive))}
+*{box-sizing:border-box}body{margin:0;overflow-x:hidden;background:var(--paper)}button,a{font:inherit}button{color:inherit}.scroll-progress{position:fixed;z-index:40;left:0;right:0;top:0;height:3px;transform-origin:left;background:linear-gradient(90deg,var(--rose),#e4b554,var(--olive))}
 
 /* Floating Music Controller */
 .floating-music-btn{
@@ -127,8 +127,10 @@
   height:115%;
   object-fit:cover;
   object-position:center 15%;
-  image-rendering:-webkit-optimize-contrast;
-  image-rendering:crisp-edges;
+  will-change:transform;
+  transform:translateZ(0);
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
 }
 .hero-scrim{
   position:absolute;
@@ -264,6 +266,26 @@ section{position:relative;padding:88px 22px}
 .story h2{margin-bottom:24px}
 .story-inner>p:not(.script){font-size:16px;line-height:1.8}
 .signature{margin-top:28px;font:28px Parisienne,cursive;color:var(--gold)}
+.couple-names-block{
+  margin-top:28px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+}
+.couple-names-block .couple-name{
+  font:clamp(24px,5.5vw,34px)/1.25 Italiana,Georgia,serif;
+  color:#3b1e0d;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-shadow:0 1px 2px rgba(255,255,255,.9);
+}
+.couple-names-block .couple-amp{
+  font:34px/1 Parisienne,cursive;
+  color:var(--gold);
+  margin:2px 0;
+}
 
 /* Ceremonies Showcase (4K Ultra-HD with Appreciable Legs & Full Composition) */
 .ceremonies-showcase{background:var(--ivory);padding:80px 20px}

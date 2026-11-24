@@ -198,7 +198,7 @@ function App(){
   const reduce=useReducedMotion();
   const {scrollYProgress}=useScroll();
   const leafY=useTransform(scrollYProgress,[0,1],[0,180]);
-  const templeY=useTransform(scrollYProgress,[0,1],[0,95]);
+  const heroParallaxY=useTransform(scrollYProgress,[0,0.3],[0,45]);
   const page=useRef<HTMLElement>(null);
 
   // 1. When user clicks "Open our invitation": after 4 seconds, BGM starts from 15.0s
@@ -248,7 +248,6 @@ function App(){
     gsap.registerPlugin(ScrollTrigger);
     const ctx=gsap.context(()=>{
       gsap.fromTo('.hero-copy>*',{opacity:0,y:25},{opacity:1,y:0,duration:1,stagger:.1,ease:'power3.out'});
-      gsap.to('.hero-art',{scale:1.05,yPercent:4,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:1}});
       gsap.utils.toArray<HTMLElement>('.ceremony-card').forEach((el,i)=>gsap.fromTo(el,{opacity:0,y:35},{opacity:1,y:0,duration:.9,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 85%'}}));
       gsap.to('.map i',{y:-10,repeat:-1,yoyo:true,duration:1.2,ease:'sine.inOut'});
       gsap.utils.toArray<HTMLElement>('.atmos-lantern').forEach((el,i)=>{
@@ -359,7 +358,7 @@ function App(){
           className="hero-art"
           src="/assets/shiv-parvati-hands.png"
           alt="Lord Shiva and Goddess Parvati hands holding Trishul with temple gopuram and lotus flowers in 4K HD"
-          style={{y:reduce?0:templeY}}
+          style={{y:reduce?0:heroParallaxY}}
         />
         <div className="hero-scrim"/>
         
@@ -383,7 +382,14 @@ function App(){
 
         <motion.div className="leaf-float left" style={{y:reduce?0:leafY}}/>
         <motion.div className="leaf-float right" style={{y:reduce?0:leafY}}/>
-        <div className="scroll-cue"><ArrowDown size={20}/><span>Our Celebrations</span></div>
+        <div
+          className="scroll-cue"
+          onClick={() => document.querySelector('.count-section')?.scrollIntoView({ behavior: 'smooth' })}
+          style={{ cursor: 'pointer' }}
+        >
+          <ArrowDown size={20}/>
+          <span>Our Celebrations</span>
+        </div>
       </section>
 
       {/* Countdown Section */}
@@ -408,7 +414,11 @@ function App(){
             Like the eternal harmony of Shiva and Shakti, two lives come together in love, duty, and eternal devotion.
             With joyful hearts and the blessings of our elders, we invite you to grace our wedding celebration with your prayers and presence.
           </p>
-          <div className="signature">Chinmayi V Pandith <i>&amp;</i> Jayanth T M</div>
+          <div className="couple-names-block">
+            <span className="couple-name">Chinmayi V Pandith</span>
+            <span className="couple-amp">&amp;</span>
+            <span className="couple-name">Jayanth T M</span>
+          </div>
         </Reveal>
       </section>
 
