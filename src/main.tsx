@@ -1,9 +1,9 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {createRoot} from 'react-dom/client';
-import {motion, useReducedMotion, useScroll, useTransform} from 'motion/react';
-import {CalendarBlank, MapPin, FlowerLotus, Sparkle, ArrowDown} from '@phosphor-icons/react';
+import React, { useEffect, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { CalendarBlank, MapPin, FlowerLotus, Sparkle, ArrowDown } from '@phosphor-icons/react';
 import gsap from 'gsap';
-import {ScrollTrigger} from 'gsap/ScrollTrigger';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './styles.css';
 
 // Muhurtham Date: 20th Dec 2026, 10:00 AM IST
@@ -32,44 +32,44 @@ const events = [
   }
 ];
 
-function Reveal({children, className=''}:{children:React.ReactNode,className?:string}){
-  const reduce=useReducedMotion();
+function Reveal({ children, className = '' }: { children: React.ReactNode, className?: string }) {
+  const reduce = useReducedMotion();
   return (
     <motion.div
       className={className}
-      initial={reduce?false:{opacity:0,y:28}}
-      whileInView={{opacity:1,y:0}}
-      viewport={{once:true,amount:.15}}
-      transition={{duration:.75,ease:[.16,1,.3,1]}}
+      initial={reduce ? false : { opacity: 0, y: 28 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: .15 }}
+      transition={{ duration: .75, ease: [.16, 1, .3, 1] }}
     >
       {children}
     </motion.div>
   );
 }
 
-function Countdown(){
-  const [now,setNow]=useState(Date.now());
-  useEffect(()=>{const id=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(id)},[]);
-  const diff=Math.max(0,WEDDING.getTime()-now);
-  const values=[Math.floor(diff/86400000),Math.floor(diff/3600000)%24,Math.floor(diff/60000)%60,Math.floor(diff/1000)%60];
+function Countdown() {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => { const id = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(id) }, []);
+  const diff = Math.max(0, WEDDING.getTime() - now);
+  const values = [Math.floor(diff / 86400000), Math.floor(diff / 3600000) % 24, Math.floor(diff / 60000) % 60, Math.floor(diff / 1000) % 60];
   return (
     <div className="countdown">
-      {values.map((v,i)=>(
+      {values.map((v, i) => (
         <div className="count-unit" key={i}>
           <div className="flip">
-            <motion.span key={v} initial={{rotateX:-75,opacity:0}} animate={{rotateX:0,opacity:1}}>
-              {String(v).padStart(2,'0')}
+            <motion.span key={v} initial={{ rotateX: -75, opacity: 0 }} animate={{ rotateX: 0, opacity: 1 }}>
+              {String(v).padStart(2, '0')}
             </motion.span>
           </div>
-          <small>{['days','hours','mins','secs'][i]}</small>
+          <small>{['days', 'hours', 'mins', 'secs'][i]}</small>
         </div>
       ))}
     </div>
   );
 }
 
-function Bloom({onOpenClick, isOpening}:{onOpenClick:()=>void, isOpening:boolean}){
-  const reduce=useReducedMotion();
+function Bloom({ onOpenClick, isOpening }: { onOpenClick: () => void, isOpening: boolean }) {
+  const reduce = useReducedMotion();
 
   const handleOpen = () => {
     onOpenClick();
@@ -77,10 +77,10 @@ function Bloom({onOpenClick, isOpening}:{onOpenClick:()=>void, isOpening:boolean
 
   return (
     <motion.div
-      className={'welcome-card '+(isOpening?'is-open':'')}
-      animate={isOpening&&!reduce?{scale:1.04,opacity:0}:{}}
-      transition={{duration:.2,ease:'easeOut'}}
-      style={{pointerEvents: isOpening ? 'none' : 'auto'}}
+      className={'welcome-card ' + (isOpening ? 'is-open' : '')}
+      animate={isOpening && !reduce ? { scale: 1.04, opacity: 0 } : {}}
+      transition={{ duration: .2, ease: 'easeOut' }}
+      style={{ pointerEvents: isOpening ? 'none' : 'auto' }}
     >
       <div className="welcome-names">
         <div className="om-shiva">|| ಓಂ ಶ್ರೀ ಗಣೇಶಾಯ ನಮಃ ||</div>
@@ -93,17 +93,17 @@ function Bloom({onOpenClick, isOpening}:{onOpenClick:()=>void, isOpening:boolean
         aria-label="Open Chinmayi and Jayanth's invitation"
         className="open-invite"
         onClick={handleOpen}
-        whileTap={{scale:.97}}
+        whileTap={{ scale: .97 }}
       >
-        <span className="seal"><FlowerLotus size={25} weight="fill"/></span>
+        <span className="seal"><FlowerLotus size={25} weight="fill" /></span>
         <b>Open our invitation</b>
       </motion.button>
     </motion.div>
   );
 }
 
-function addCalendar(){
-  const body=[
+function addCalendar() {
+  const body = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
     'BEGIN:VEVENT',
@@ -115,48 +115,48 @@ function addCalendar(){
     'END:VEVENT',
     'END:VCALENDAR'
   ].join('\r\n');
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([body],{type:'text/calendar'}));
-  a.download='chinmayi-jayanth-wedding.ics';
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([body], { type: 'text/calendar' }));
+  a.download = 'chinmayi-jayanth-wedding.ics';
   a.click();
   URL.revokeObjectURL(a.href);
 }
 
-function ScratchDate(){
-  const canvas=useRef<HTMLCanvasElement>(null);
-  const [done,setDone]=useState(false);
-  const drawing=useRef(false);
-  const strokes=useRef(0);
+function ScratchDate() {
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const [done, setDone] = useState(false);
+  const drawing = useRef(false);
+  const strokes = useRef(0);
 
-  useEffect(()=>{
-    const c=canvas.current;if(!c)return;
-    const ratio=Math.min(devicePixelRatio,2);
-    const rect=c.getBoundingClientRect();
-    c.width=rect.width*ratio;c.height=rect.height*ratio;
-    const x=c.getContext('2d')!;
-    x.scale(ratio,ratio);
-    const g=x.createLinearGradient(0,0,rect.width,rect.height);
-    g.addColorStop(0,'#d7a94f');g.addColorStop(.5,'#f0d08a');g.addColorStop(1,'#a76d1c');
-    x.fillStyle=g;x.fillRect(0,0,rect.width,rect.height);
-    x.fillStyle='#633f1f';x.textAlign='center';
-    x.font='11px Marcellus, serif';
-    x.fillText('SCRATCH TO REVEAL OUR DATE',rect.width/2,rect.height/2-6);
-    x.font='25px serif';
-    x.fillText('❋',rect.width/2,rect.height/2+29);
-  },[]);
+  useEffect(() => {
+    const c = canvas.current; if (!c) return;
+    const ratio = Math.min(devicePixelRatio, 2);
+    const rect = c.getBoundingClientRect();
+    c.width = rect.width * ratio; c.height = rect.height * ratio;
+    const x = c.getContext('2d')!;
+    x.scale(ratio, ratio);
+    const g = x.createLinearGradient(0, 0, rect.width, rect.height);
+    g.addColorStop(0, '#d7a94f'); g.addColorStop(.5, '#f0d08a'); g.addColorStop(1, '#a76d1c');
+    x.fillStyle = g; x.fillRect(0, 0, rect.width, rect.height);
+    x.fillStyle = '#633f1f'; x.textAlign = 'center';
+    x.font = '11px Marcellus, serif';
+    x.fillText('SCRATCH TO REVEAL OUR DATE', rect.width / 2, rect.height / 2 - 6);
+    x.font = '25px serif';
+    x.fillText('❋', rect.width / 2, rect.height / 2 + 29);
+  }, []);
 
-  const scratch=(e:React.PointerEvent<HTMLCanvasElement>)=>{
-    if(!drawing.current||done)return;
-    const c=canvas.current!,r=c.getBoundingClientRect(),x=c.getContext('2d')!;
-    x.globalCompositeOperation='destination-out';
-    x.beginPath();x.arc(e.clientX-r.left,e.clientY-r.top,24,0,Math.PI*2);x.fill();
-    if(++strokes.current>42){setDone(true);c.style.opacity='0';navigator.vibrate?.(35)}
+  const scratch = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    if (!drawing.current || done) return;
+    const c = canvas.current!, r = c.getBoundingClientRect(), x = c.getContext('2d')!;
+    x.globalCompositeOperation = 'destination-out';
+    x.beginPath(); x.arc(e.clientX - r.left, e.clientY - r.top, 24, 0, Math.PI * 2); x.fill();
+    if (++strokes.current > 42) { setDone(true); c.style.opacity = '0'; navigator.vibrate?.(35) }
   };
 
   return (
-    <section className={'scratch-section '+(done?'revealed':'')}>
+    <section className={'scratch-section ' + (done ? 'revealed' : '')}>
       <div className="float-field" aria-hidden="true">
-        {Array.from({length:12},(_,i)=><i key={i} style={{'--i':i} as React.CSSProperties}>❀</i>)}
+        {Array.from({ length: 12 }, (_, i) => <i key={i} style={{ '--i': i } as React.CSSProperties}>❀</i>)}
       </div>
       <Reveal>
         <p className="script">Save our dates</p>
@@ -170,40 +170,37 @@ function ScratchDate(){
           </div>
           <canvas
             ref={canvas}
-            onPointerDown={e=>{drawing.current=true;e.currentTarget.setPointerCapture(e.pointerId);scratch(e)}}
+            onPointerDown={e => { drawing.current = true; e.currentTarget.setPointerCapture(e.pointerId); scratch(e) }}
             onPointerMove={scratch}
-            onPointerUp={()=>drawing.current=false}
-            onPointerCancel={()=>drawing.current=false}
+            onPointerUp={() => drawing.current = false}
+            onPointerCancel={() => drawing.current = false}
           />
         </div>
-        <p className="scratch-hint">{done?'We look forward to seeing you with family ♡':'Use your finger to uncover the date'}</p>
+        <p className="scratch-hint">{done ? 'We look forward to seeing you with family ♡' : 'Use your finger to uncover the date'}</p>
       </Reveal>
     </section>
   );
 }
 
-function App(){
-  const [entered,setEntered]=useState(false);
-  const [introPlaying,setIntroPlaying]=useState(false);
-  const [isExiting,setIsExiting]=useState(false);
+function App() {
+  const [entered, setEntered] = useState(false);
+  const [introPlaying, setIntroPlaying] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
 
-  const introVideo=useRef<HTMLVideoElement>(null);
-  const audioRef=useRef<HTMLAudioElement>(null);
-  const audioTimerRef=useRef<number | null>(null);
+  const introVideo = useRef<HTMLVideoElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const audioTimerRef = useRef<number | null>(null);
 
-  const reduce=useReducedMotion();
-  const {scrollYProgress}=useScroll();
-  const leafY=useTransform(scrollYProgress,[0,1],[0,180]);
-  const heroParallaxY=useTransform(scrollYProgress,[0,0.3],[0,45]);
-  const page=useRef<HTMLElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll();
+  const leafY = useTransform(scrollYProgress, [0, 1], [0, 180]);
+  const heroParallaxY = useTransform(scrollYProgress, [0, 0.3], [0, 45]);
+  const page = useRef<HTMLElement>(null);
 
   // When user taps "Open our invitation":
   // 1. Instantly start video so there is NO blank/brown delay
-  // 2. Start audio: on mobile, audio.play() MUST be initiated synchronously in the user touch event to unlock mobile audio permission.
-  // Using audio.muted = true ensures that on iOS Safari (where audio.volume is read-only and ignores volume = 0),
-  // the audio remains truly silent during the initial 4 seconds without prematurely playing sound.
-  // 3. Exactly 4 seconds after tapping, the song starts playing audibly from 15.0s during the intro.
-  // 4. When reaching the invitation page (intro ends or skip clicked), the song starts from 26.5s and continues.
+  // 2. Start audio immediately from 15.0s (plays 15s to 24s during intro video)
+  // 3. When reaching the invitation page (hand image screen), bgm starts from 26.5s and continues
   const handleOpenInviteClicked = () => {
     // 1. Start intro video immediately within user gesture
     const v = introVideo.current;
@@ -213,10 +210,10 @@ function App(){
       v.playsInline = true;
       v.currentTime = 0;
       setIntroPlaying(true);
-      void v.play().catch(() => {});
+      void v.play().catch(() => { });
     }
 
-    // 2. Start audio silently to capture user gesture and establish active mobile audio session
+    // 2. Start audio immediately from 15.0s on button tap
     const audio = audioRef.current;
     if (audio) {
       if (audioTimerRef.current) {
@@ -224,31 +221,16 @@ function App(){
         audioTimerRef.current = null;
       }
 
-      // iOS Safari ignores audio.volume = 0, but fully respects audio.muted = true!
-      audio.muted = true;
+      audio.muted = false;
       audio.volume = 1.0;
       try {
-        // Silently start from 11.0s so it streams toward 15.0s during the 4 seconds
-        audio.currentTime = 11.0;
-      } catch {}
+        audio.currentTime = 15.0; // Starts from 15.0s immediately on tap
+      } catch { }
 
       const playPromise = audio.play();
       if (playPromise !== undefined) {
-        playPromise.catch(() => {});
+        playPromise.catch(() => { });
       }
-
-      // After exactly 4 seconds, ensure 15.0s, unmute, and play audibly
-      audioTimerRef.current = window.setTimeout(() => {
-        try {
-          audio.currentTime = 15.0;
-        } catch {}
-        audio.muted = false;
-        audio.volume = 1.0;
-        const p2 = audio.play();
-        if (p2 !== undefined) {
-          p2.catch(() => {});
-        }
-      }, 4000);
     }
   };
 
@@ -268,10 +250,10 @@ function App(){
       audio.volume = 1.0;
       try {
         audio.currentTime = 26.5; // Starts from 26.5s as requested
-      } catch {}
+      } catch { }
       const p = audio.play();
       if (p !== undefined) {
-        p.catch(() => {});
+        p.catch(() => { });
       }
     }
 
@@ -291,9 +273,9 @@ function App(){
           audio.muted = false;
           audio.volume = 1.0;
           if (audio.currentTime < 26.0) {
-            try { audio.currentTime = 26.5; } catch {}
+            try { audio.currentTime = 26.5; } catch { }
           }
-          audio.play().catch(() => {});
+          audio.play().catch(() => { });
         }
       }
     };
@@ -305,42 +287,42 @@ function App(){
     };
   }, [entered]);
 
-  useEffect(()=>{
-    if(reduce||!entered||!page.current)return;
+  useEffect(() => {
+    if (reduce || !entered || !page.current) return;
     gsap.registerPlugin(ScrollTrigger);
-    const ctx=gsap.context(()=>{
-      gsap.fromTo('.hero-copy>*',{opacity:0,y:25},{opacity:1,y:0,duration:1,stagger:.1,ease:'power3.out'});
-      gsap.utils.toArray<HTMLElement>('.ceremony-card').forEach((el,i)=>gsap.fromTo(el,{opacity:0,y:35},{opacity:1,y:0,duration:.9,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 85%'}}));
-      gsap.to('.map i',{y:-10,repeat:-1,yoyo:true,duration:1.2,ease:'sine.inOut'});
-      gsap.utils.toArray<HTMLElement>('.atmos-lantern').forEach((el,i)=>{
-        const depth=Number(el.dataset.depth||.4);
-        gsap.to(el,{yPercent:-90*depth,x:Math.sin(i)*18*depth,rotation:i%2?4:-4,ease:'none',scrollTrigger:{trigger:page.current,start:'top top',end:'bottom bottom',scrub:1.2+depth}});
-        gsap.to(el.querySelector('.lantern-flame'),{scaleY:1.18,opacity:.72,repeat:-1,yoyo:true,duration:.7+i*.08,ease:'sine.inOut'});
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.hero-copy>*', { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 1, stagger: .1, ease: 'power3.out' });
+      gsap.utils.toArray<HTMLElement>('.ceremony-card').forEach((el, i) => gsap.fromTo(el, { opacity: 0, y: 35 }, { opacity: 1, y: 0, duration: .9, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 85%' } }));
+      gsap.to('.map i', { y: -10, repeat: -1, yoyo: true, duration: 1.2, ease: 'sine.inOut' });
+      gsap.utils.toArray<HTMLElement>('.atmos-lantern').forEach((el, i) => {
+        const depth = Number(el.dataset.depth || .4);
+        gsap.to(el, { yPercent: -90 * depth, x: Math.sin(i) * 18 * depth, rotation: i % 2 ? 4 : -4, ease: 'none', scrollTrigger: { trigger: page.current, start: 'top top', end: 'bottom bottom', scrub: 1.2 + depth } });
+        gsap.to(el.querySelector('.lantern-flame'), { scaleY: 1.18, opacity: .72, repeat: -1, yoyo: true, duration: .7 + i * .08, ease: 'sine.inOut' });
       });
-    },page);
-    return()=>ctx.revert();
-  },[entered,reduce]);
+    }, page);
+    return () => ctx.revert();
+  }, [entered, reduce]);
 
   return (
     <main ref={page}>
       {/* Background Audio Player */}
       <audio
         ref={audioRef}
-        src="/assets/audio.mp3?v=4"
+        src="/assets/audio.mp3?v=5"
         preload="auto"
         loop
         playsInline
       />
 
-      <motion.div className="scroll-progress" style={{scaleX:scrollYProgress}}/>
+      <motion.div className="scroll-progress" style={{ scaleX: scrollYProgress }} />
 
       <div className="lantern-atmosphere" aria-hidden="true">
         {[
-          {x:6,y:12,d:.22,s:.62,b:2.2},{x:89,y:20,d:.35,s:.78,b:1.4},{x:12,y:42,d:.7,s:1.05,b:.4},
-          {x:93,y:55,d:.28,s:.58,b:2.6},{x:4,y:72,d:1,s:1.35,b:.2},{x:87,y:84,d:.62,s:.92,b:.8},{x:48,y:64,d:.18,s:.42,b:3.2}
-        ].map((l,i)=>(
-          <span key={i} className="atmos-lantern" data-depth={l.d} style={{left:`${l.x}%`,top:`${l.y}%`,'--scale':l.s,'--blur':`${l.b}px`,'--delay':`${-i*.6}s`} as React.CSSProperties}>
-            <i className="lantern-chain"/><i className="lantern-cap"/><i className="lantern-body"><b className="lantern-flame"/></i><i className="lantern-tail"/>
+          { x: 6, y: 12, d: .22, s: .62, b: 2.2 }, { x: 89, y: 20, d: .35, s: .78, b: 1.4 }, { x: 12, y: 42, d: .7, s: 1.05, b: .4 },
+          { x: 93, y: 55, d: .28, s: .58, b: 2.6 }, { x: 4, y: 72, d: 1, s: 1.35, b: .2 }, { x: 87, y: 84, d: .62, s: .92, b: .8 }, { x: 48, y: 64, d: .18, s: .42, b: 3.2 }
+        ].map((l, i) => (
+          <span key={i} className="atmos-lantern" data-depth={l.d} style={{ left: `${l.x}%`, top: `${l.y}%`, '--scale': l.s, '--blur': `${l.b}px`, '--delay': `${-i * .6}s` } as React.CSSProperties}>
+            <i className="lantern-chain" /><i className="lantern-cap" /><i className="lantern-body"><b className="lantern-flame" /></i><i className="lantern-tail" />
           </span>
         ))}
       </div>
@@ -364,10 +346,10 @@ function App(){
             onEnded={handleEnterFirstPage}
             aria-label="Chinmayi and Jayanth's illustrated wedding invitation opening"
           >
-            <source src="/assets/aarav-ananya-opening.mp4" type="video/mp4"/>
+            <source src="/assets/aarav-ananya-opening.mp4" type="video/mp4" />
           </video>
-          <div className="welcome-shade"/>
-          <div className="garland-edge"/>
+          <div className="welcome-shade" />
+          <div className="garland-edge" />
 
           {!introPlaying && (
             <Bloom
@@ -393,36 +375,36 @@ function App(){
           className="hero-art"
           src="/assets/shiv-parvati-hands.png"
           alt="Lord Shiva and Goddess Parvati hands holding Trishul with temple gopuram and lotus flowers in 4K HD"
-          style={{y:reduce?0:heroParallaxY}}
+          style={{ y: reduce ? 0 : heroParallaxY }}
         />
-        <div className="hero-scrim"/>
-        
+        <div className="hero-scrim" />
+
         {/* Hero Copy (Unobscured so divine background image is fully revealed) */}
         <motion.div
           className="hero-copy"
-          initial={{opacity:0,y:24}}
-          animate={{opacity:entered?1:0,y:entered?0:24}}
-          transition={{delay:.15,duration:1}}
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: entered ? 1 : 0, y: entered ? 0 : 24 }}
+          transition={{ delay: .15, duration: 1 }}
         >
           <div className="om-header">
             <span>ಓಂ ಶ್ರೀ ಗುರುಭ್ಯೋ ನಮಃ ।।</span>
             <span>ಓಂ ನಮಃ ಶಿವಾಯ ।।</span>
           </div>
-          <div className="gold-filigree-divider"><i/>❦<i/></div>
-          <p className="blessing">With the divine blessings of Lord Shiva &amp; Goddess Parvati<br/>and our beloved families</p>
+          <div className="gold-filigree-divider"><i />❦<i /></div>
+          <p className="blessing">With the divine blessings of Lord Shiva &amp; Goddess Parvati<br />and our beloved families</p>
           <h1>Chinmayi <span>&amp;</span> Jayanth</h1>
-          <div className="date-rule"><i/>19 · 20 · DECEMBER · 2026<i/></div>
+          <div className="date-rule"><i />19 · 20 · DECEMBER · 2026<i /></div>
           <p className="venue-tag">Lakshya Convention Hall · Kadur, Karnataka</p>
         </motion.div>
 
-        <motion.div className="leaf-float left" style={{y:reduce?0:leafY}}/>
-        <motion.div className="leaf-float right" style={{y:reduce?0:leafY}}/>
+        <motion.div className="leaf-float left" style={{ y: reduce ? 0 : leafY }} />
+        <motion.div className="leaf-float right" style={{ y: reduce ? 0 : leafY }} />
         <div
           className="scroll-cue"
           onClick={() => document.querySelector('.count-section')?.scrollIntoView({ behavior: 'smooth' })}
           style={{ cursor: 'pointer' }}
         >
-          <ArrowDown size={20}/>
+          <ArrowDown size={20} />
           <span>Our Celebrations</span>
         </div>
       </section>
@@ -432,17 +414,17 @@ function App(){
         <Reveal>
           <p className="kicker">Until the sacred Muhurtham</p>
           <h2>Counting Every Auspicious Moment</h2>
-          <Countdown/>
+          <Countdown />
         </Reveal>
       </section>
 
       {/* Scratch To Reveal Date */}
-      <ScratchDate/>
+      <ScratchDate />
 
       {/* Sacred Union Story */}
       <section className="story ornamental">
         <Reveal className="story-inner">
-          <FlowerLotus size={36} weight="thin"/>
+          <FlowerLotus size={36} weight="thin" />
           <p className="script">Divine Union of Hearts</p>
           <h2>Two Souls, One Sacred Journey</h2>
           <p>
@@ -535,11 +517,11 @@ function App(){
       {/* Venue Section with Google Map */}
       <section className="venue ornamental">
         <Reveal>
-          <MapPin size={38} weight="thin"/>
+          <MapPin size={38} weight="thin" />
           <p className="script">Join Us At</p>
           <h2>Lakshya Convention Hall</h2>
           <p className="venue-address">
-            Bangalore - Honnavar Highway, Opp. Highway School,<br/>
+            Bangalore - Honnavar Highway, Opp. Highway School,<br />
             Kadur, Ullinagur Rural, Karnataka 577548
           </p>
 
@@ -551,7 +533,7 @@ function App(){
               src="https://www.google.com/maps?q=Laksha%20Convention%20Hall%2C%20Kadur%2C%20Karnataka%20577548&z=15&output=embed"
             />
             <div className="map-overlay">
-              <span><MapPin size={19} weight="fill"/>Wedding Venue</span>
+              <span><MapPin size={19} weight="fill" />Wedding Venue</span>
               <b>Lakshya Convention Hall</b>
               <small>Opp. Highway School, Kadur, Karnataka</small>
             </div>
@@ -564,10 +546,10 @@ function App(){
               target="_blank"
               rel="noreferrer"
             >
-              <MapPin size={19}/>Open in Google Maps
+              <MapPin size={19} />Open in Google Maps
             </a>
             <button className="button secondary" onClick={addCalendar}>
-              <CalendarBlank size={19}/>Add to Calendar
+              <CalendarBlank size={19} />Add to Calendar
             </button>
           </div>
         </Reveal>
@@ -580,9 +562,9 @@ function App(){
           loading="lazy"
           alt="Lord Shiva and Goddess Parvati seated overlooking divine golden temple city in 4K HD"
         />
-        <div className="footer-overlay"/>
+        <div className="footer-overlay" />
         <Reveal className="footer-copy">
-          <Sparkle size={27} weight="thin"/>
+          <Sparkle size={27} weight="thin" />
           <p>We eagerly await your gracious presence and blessings</p>
           <h2>Chinmayi <i>&amp;</i> Jayanth</h2>
           <span>19 &amp; 20 December 2026 · Lakshya Convention Hall · Kadur</span>
@@ -600,4 +582,4 @@ function App(){
   );
 }
 
-createRoot(document.getElementById('root')!).render(<App/>);
+createRoot(document.getElementById('root')!).render(<App />);
