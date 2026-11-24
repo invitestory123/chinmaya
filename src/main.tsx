@@ -101,7 +101,6 @@ function Bloom({onDone, onOpenClick}:{onDone:()=>void, onOpenClick:()=>void}){
       >
         <span className="seal"><FlowerLotus size={25} weight="fill"/></span>
         <b>Open our invitation</b>
-        <small>Tap to enter with music ♫</small>
       </motion.button>
     </motion.div>
   );
@@ -202,7 +201,7 @@ function App(){
   const templeY=useTransform(scrollYProgress,[0,1],[0,95]);
   const page=useRef<HTMLElement>(null);
 
-  // 1. When user clicks "Open our invitation": after 2 seconds, BGM starts from 15.0s
+  // 1. When user clicks "Open our invitation": after 4 seconds, BGM starts from 15.0s
   const handleOpenInviteClicked = () => {
     if (bgmTimeoutRef.current) {
       window.clearTimeout(bgmTimeoutRef.current);
@@ -210,10 +209,10 @@ function App(){
     bgmTimeoutRef.current = window.setTimeout(() => {
       const audio = audioRef.current;
       if (audio && !entered) {
-        audio.currentTime = 15.0; // Starts from 15s after 2s delay
+        audio.currentTime = 15.0; // Starts from 15s after 4s delay as requested
         audio.play().then(() => setAudioPlaying(true)).catch(() => {});
       }
-    }, 2000);
+    }, 4000);
   };
 
   // 2. When the first page opens: BGM starts from 26.5s and resumes till end
