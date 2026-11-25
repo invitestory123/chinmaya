@@ -198,9 +198,9 @@ function App() {
   const page = useRef<HTMLElement>(null);
 
   // When user taps "Open our invitation":
-  // 1. Instantly start video so there is NO blank/brown delay
-  // 2. Start audio immediately from 15.0s (plays 15s to 24s during intro video)
-  // 3. When reaching the invitation page (hand image screen), bgm starts from 26.5s and continues
+  // 1. Instantly start video opening animation
+  // 2. Instantly start audio from 15.0s (plays 15s through 21s during opening animation)
+  // 3. As opening video finishes, transition to invitation page (hand image screen) and jump directly to 26.5s
   const handleOpenInviteClicked = () => {
     // 1. Start intro video immediately within user gesture
     const v = introVideo.current;
@@ -209,6 +209,7 @@ function App() {
       v.muted = true;
       v.playsInline = true;
       v.currentTime = 0;
+      try { v.playbackRate = 1.25; } catch { }
       setIntroPlaying(true);
       void v.play().catch(() => { });
     }
@@ -224,17 +225,22 @@ function App() {
       audio.muted = false;
       audio.volume = 1.0;
       try {
-        audio.currentTime = 15.0; // Starts from 15.0s immediately on tap
+        audio.currentTime = 15.0; // Starts immediately from 15.0s on tap
       } catch { }
 
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.catch(() => { });
       }
+
+      // Exactly as audio reaches 21.0s (6 seconds duration), transition to invitation page & jump to 26.5s
+      audioTimerRef.current = window.setTimeout(() => {
+        handleEnterFirstPage();
+      }, 6000);
     }
   };
 
-  // When intro ends or user clicks skip intro: start from 26.5s and continue
+  // When intro ends, audio reaches 21s, or user clicks skip intro: start from 26.5s and continue
   const handleEnterFirstPage = () => {
     if (isExiting) return;
     setIsExiting(true);
@@ -312,6 +318,13 @@ function App() {
         preload="auto"
         loop
         playsInline
+        onTimeUpdate={(e) => {
+          const a = e.currentTarget;
+          // Play from 15s through 21s during opening video animation, then transition at 21.0s
+          if (introPlaying && !isExiting && a.currentTime >= 21.0 && a.currentTime < 26.0) {
+            handleEnterFirstPage();
+          }
+        }}
       />
 
       <motion.div className="scroll-progress" style={{ scaleX: scrollYProgress }} />
