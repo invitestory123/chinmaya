@@ -85,7 +85,7 @@ function Bloom({ onOpenClick, isOpening }: { onOpenClick: () => void, isOpening:
       <div className="welcome-names">
         <div className="om-shiva">|| ಓಂ ಶ್ರೀ ಗಣೇಶಾಯ ನಮಃ ||</div>
         <small>Together with our families</small>
-        <h1>Chinmayi <i>&</i> Jayanth</h1>
+        <h1>Chinmayi <i>weds</i> Jayanth</h1>
         <p>invite you to celebrate their wedding</p>
         <span>19 · 20 · DECEMBER · 2026</span>
       </div>
@@ -382,7 +382,7 @@ function App() {
           </div>
           <div className="gold-filigree-divider"><i />❦<i /></div>
           <p className="blessing">With the divine blessings of Lord Shiva &amp; Goddess Parvati<br />and our beloved families</p>
-          <h1>Chinmayi <span>&amp;</span> Jayanth</h1>
+          <h1>Chinmayi <span>weds</span> Jayanth</h1>
           <div className="date-rule"><i />19 · 20 · DECEMBER · 2026<i /></div>
           <p className="venue-tag">Lakshya Convention Hall · Kadur, Karnataka</p>
         </motion.div>
