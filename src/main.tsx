@@ -198,49 +198,35 @@ function App() {
   const page = useRef<HTMLElement>(null);
 
   // When user taps "Open our invitation":
-  // 1. Instantly start video opening animation
-  // 2. Instantly start audio from 15.0s (plays 15s through 21s during opening animation)
-  // 3. As opening video finishes, transition to invitation page (hand image screen) and jump directly to 26.5s
+  // 1. Play intro video with its embedded Chandrachooda intro track (15.0s - 23.0s)
+  // 2. Pre-prime background audio element so mobile browser captures playback authorization
   const handleOpenInviteClicked = () => {
-    // 1. Start intro video immediately within user gesture
+    // 1. Play intro video immediately with sound
     const v = introVideo.current;
     if (v) {
-      v.defaultMuted = true;
-      v.muted = true;
-      v.playsInline = true;
+      v.muted = false;
+      v.volume = 1.0;
       v.currentTime = 0;
-      try { v.playbackRate = 1.25; } catch { }
       setIntroPlaying(true);
       void v.play().catch(() => { });
     }
 
-    // 2. Start audio immediately from 15.0s on button tap
+    // 2. Pre-prime background audio for invitation page so mobile permissions are captured
     const audio = audioRef.current;
     if (audio) {
-      if (audioTimerRef.current) {
-        window.clearTimeout(audioTimerRef.current);
-        audioTimerRef.current = null;
-      }
-
-      audio.muted = false;
-      audio.volume = 1.0;
-      try {
-        audio.currentTime = 15.0; // Starts immediately from 15.0s on tap
-      } catch { }
-
+      audio.muted = true;
+      audio.currentTime = 0;
       const playPromise = audio.play();
       if (playPromise !== undefined) {
-        playPromise.catch(() => { });
+        playPromise.then(() => {
+          if (!entered) audio.pause();
+        }).catch(() => { });
       }
-
-      // Exactly as audio reaches 21.0s (6 seconds duration), transition to invitation page & jump to 26.5s
-      audioTimerRef.current = window.setTimeout(() => {
-        handleEnterFirstPage();
-      }, 6000);
     }
   };
 
-  // When intro ends, audio reaches 21s, or user clicks skip intro: start from 26.5s and continue
+  // When opening video finishes or user clicks skip intro:
+  // Transition to invitation page (Shiva-Parvati hand image screen) and start BGM from 26.5s onwards
   const handleEnterFirstPage = () => {
     if (isExiting) return;
     setIsExiting(true);
@@ -250,13 +236,18 @@ function App() {
       audioTimerRef.current = null;
     }
 
+    // Stop intro video
+    const v = introVideo.current;
+    if (v) {
+      v.pause();
+    }
+
+    // Play invitation background music starting from 26.5s vocal segment onwards
     const audio = audioRef.current;
     if (audio) {
       audio.muted = false;
       audio.volume = 1.0;
-      try {
-        audio.currentTime = 26.5; // Starts from 26.5s as requested
-      } catch { }
+      audio.currentTime = 0;
       const p = audio.play();
       if (p !== undefined) {
         p.catch(() => { });
@@ -274,15 +265,10 @@ function App() {
     const handleMobileTouchFallback = () => {
       const audio = audioRef.current;
       if (!audio) return;
-      if (entered) {
-        if (audio.paused || audio.muted) {
-          audio.muted = false;
-          audio.volume = 1.0;
-          if (audio.currentTime < 26.0) {
-            try { audio.currentTime = 26.5; } catch { }
-          }
-          audio.play().catch(() => { });
-        }
+      if (entered && (audio.paused || audio.muted)) {
+        audio.muted = false;
+        audio.volume = 1.0;
+        audio.play().catch(() => { });
       }
     };
     window.addEventListener('touchend', handleMobileTouchFallback, { passive: true });
@@ -311,20 +297,13 @@ function App() {
 
   return (
     <main ref={page}>
-      {/* Background Audio Player */}
+      {/* Background Audio Player (Starts from 26.5s vocal segment onwards in loop) */}
       <audio
         ref={audioRef}
-        src="/assets/audio.mp3?v=5"
+        src="/assets/invitation-bgm.mp3?v=1"
         preload="auto"
         loop
         playsInline
-        onTimeUpdate={(e) => {
-          const a = e.currentTarget;
-          // Play from 15s through 21s during opening video animation, then transition at 21.0s
-          if (introPlaying && !isExiting && a.currentTime >= 21.0 && a.currentTime < 26.0) {
-            handleEnterFirstPage();
-          }
-        }}
       />
 
       <motion.div className="scroll-progress" style={{ scaleX: scrollYProgress }} />
@@ -351,15 +330,13 @@ function App() {
           <video
             ref={introVideo}
             className="welcome-video"
-            muted
-            defaultMuted
             playsInline
             preload="auto"
             poster="/assets/entrance-first-frame.png"
             onEnded={handleEnterFirstPage}
             aria-label="Chinmayi and Jayanth's illustrated wedding invitation opening"
           >
-            <source src="/assets/aarav-ananya-opening.mp4" type="video/mp4" />
+            <source src="/assets/aarav-ananya-opening.mp4?v=2" type="video/mp4" />
           </video>
           <div className="welcome-shade" />
           <div className="garland-edge" />
