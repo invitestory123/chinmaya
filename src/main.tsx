@@ -85,7 +85,7 @@ function Bloom({ onOpenClick, isOpening }: { onOpenClick: () => void, isOpening:
       <div className="welcome-names">
         <div className="om-shiva">|| ಓಂ ಶ್ರೀ ಗಣೇಶಾಯ ನಮಃ ||</div>
         <small>Together with our families</small>
-        <h1>Chinmayi <i>weds</i> Jayanth</h1>
+        <h1>Chinmayi <i>&</i> Jayanth</h1>
         <p>invite you to celebrate their wedding</p>
         <span>19 · 20 · DECEMBER · 2026</span>
       </div>
